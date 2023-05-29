@@ -1,5 +1,6 @@
 import firebase from 'firebase/compat/app';
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider } from "firebase/auth";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 import 'firebase/compat/auth';
 
 export class FirebaseService {
@@ -17,6 +18,7 @@ export class FirebaseService {
     firebase.initializeApp(firebaseConfig);
 
     this.auth = firebase.auth();
+    this.database = getFirestore();
   }
 
   async signIn(email, password) {
@@ -50,6 +52,16 @@ export class FirebaseService {
     }
   }
 
+  async getAllPosts() {
+    const postsRef = collection(this.database, "posts");
+    const q = query(postsRef);
+    return getDocs(q).then((querySnapshot) => {
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }).catch((error) => {
+      console.log("Error getting documents: ", error);
+    });
+  }
+
   async signOut() {
     try {
       await this.auth.signOut();
@@ -58,4 +70,6 @@ export class FirebaseService {
       throw error;
     }
   }
+
+
 }

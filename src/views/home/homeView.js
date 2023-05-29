@@ -1,5 +1,9 @@
 import { authController} from '../../controllers/authController'
+import { postingboardController} from '../../controllers/postingboardController'
+import { PostingboardView } from '../postingboard/postingboardView';
 import { SignupView } from '../signup/signupView'
+import { HeaderView } from './headerView'
+import { FooterView } from './footerView'
 import '../../styles/login.css';
 
 export class HomeView {
@@ -55,8 +59,17 @@ function applySubmitListener(container) {
 
 function applyGoogleLoginListener(container) {
   const googleBtn = container.querySelector('.btn-google');
-  googleBtn.addEventListener('click', (event) => {
-    authController.signInWithGoogle();
+  googleBtn.addEventListener('click', async (event) => {
+    const user = await authController.signInWithGoogle();
+    console.log(user);
+    const posts = await postingboardController.getAllPosts();
+    console.log(posts);
+    const headerView = new HeaderView(document.querySelector('#main-header'));
+    const postingboardView = new PostingboardView(document.querySelector('#app'));
+    const footerView = new FooterView(document.querySelector('#main-footer'))
+    headerView.render(user);
+    postingboardView.render(posts);
+    footerView.render();
   });
 }
 

@@ -9,7 +9,6 @@ export class DashboardView {
   }
 
   render(user) {
-    console.log(user);
     this.container.innerHTML = this.template;
   }
 
